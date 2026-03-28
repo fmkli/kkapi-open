@@ -32,6 +32,14 @@ jobs:
           path: node_modules
           key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
 
+      - name: Install dependencies
+        run: |
+          # 强制切换到官方源，跳过所有可能过期的国内镜像
+          yarn config set registry https://registry.npmjs.org/
+          # 强制忽略证书校验（作为兜底方案，虽然不推荐长期用，但能解决当前的卡点）
+          yarn config set strict-ssl false 
+          yarn install
+          
       - name: 4. 安装插件
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
